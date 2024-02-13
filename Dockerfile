@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM debian:bookworm
 
-ARG RUNNER_VERSION="2.294.0"
+ARG RUNNER_VERSION="2.313.0"
 
 # Prevents installdependencies.sh from prompting the user and blocking the image creation
 ARG DEBIAN_FRONTEND=noninteractive
@@ -16,13 +16,10 @@ RUN cd /home/docker && mkdir actions-runner && cd actions-runner \
 
 RUN chown -R docker ~docker && /home/docker/actions-runner/bin/installdependencies.sh
 
-COPY start.sh start.sh
-
-# make the script executable
-RUN chmod +x start.sh
+ADD --chmod=0755 start.sh start.sh
 
 # since the config and run script for actions are not allowed to be run by root,
 # set the user to "docker" so all subsequent commands are run as the docker user
 USER docker
 
-ENTRYPOINT ["./start.sh"]
+CMD /start.sh
